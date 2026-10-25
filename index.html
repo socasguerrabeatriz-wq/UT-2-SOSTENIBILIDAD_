@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UT2 · Retos ambientales y sociales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --picon:#2a2522; --picon2:#3b3430; --arena:#f6efe3; --arena2:#ece1cf;
+  --verde:#3d7a4c; --verde2:#e3efe2; --ocre:#c46f32; --ocre2:#f8e3d2;
+  --azul:#2f6f8f; --azul2:#dcebf2; --texto:#2a2522; --suave:#6b625b;
+  --ok:#2e7d4f; --ko:#b23b2e; --radio:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--arena);color:var(--texto);line-height:1.55}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15;margin:0 0 .5em}
+h2{font-size:clamp(1.5rem,4vw,2.1rem)}
+h3{font-size:1.2rem}
+p{margin:0 0 .8em}
+a{color:var(--azul)}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+
+/* Cabecera */
+header{background:var(--picon);color:#fff;padding:22px 0 26px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-60px;bottom:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,#c46f3255,transparent 70%)}
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:.85rem;opacity:.9}
+.top img{height:60px;background:#fff;border-radius:10px;padding:5px 8px}
+.top .centro{font-weight:700;letter-spacing:.02em}
+.top .curso{margin-left:auto;background:#ffffff1a;padding:4px 10px;border-radius:999px}
+header h1{font-size:clamp(1.9rem,6vw,3rem);margin:18px 0 6px}
+header .sub{opacity:.85;max-width:640px}
+header .prof{margin-top:10px;font-size:.9rem;opacity:.8}
+
+/* Navegación */
+nav{position:sticky;top:0;z-index:10;background:var(--arena);border-bottom:1px solid var(--arena2)}
+nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
+nav button{flex:0 0 auto;border:0;background:#fff;color:var(--texto);padding:8px 14px;border-radius:999px;font:600 .9rem Inter,sans-serif;cursor:pointer;box-shadow:0 1px 0 var(--arena2)}
+nav button.on{background:var(--verde);color:#fff}
+nav button .tick{margin-left:4px;color:var(--verde)}
+nav button.on .tick{color:#fff}
+.barra{height:4px;background:var(--arena2)}
+.barra i{display:block;height:100%;width:0;background:var(--ocre);transition:width .4s}
+
+section{display:none;padding:28px 0 60px}
+section.on{display:block;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.card{background:#fff;border-radius:var(--radio);padding:20px;box-shadow:0 2px 0 var(--arena2);margin-bottom:16px}
+.pregunta{background:var(--picon);color:#fff;border-radius:var(--radio);padding:22px;margin-bottom:18px}
+.pregunta b{color:#f1b789}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.pill{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--verde2);color:var(--verde);margin-bottom:8px}
+.nota{background:var(--ocre2);border-left:4px solid var(--ocre);padding:12px 14px;border-radius:10px;font-size:.93rem}
+.siguiente{display:flex;justify-content:flex-end;margin-top:20px}
+.btn{border:0;background:var(--verde);color:#fff;font:600 1rem Inter,sans-serif;padding:12px 20px;border-radius:12px;cursor:pointer}
+.btn.sec{background:#fff;color:var(--verde);border:2px solid var(--verde)}
+
+/* Retos */
+.retos{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:18px}
+.reto-btn{border:2px solid transparent;background:#fff;border-radius:var(--radio);padding:16px 12px;text-align:center;cursor:pointer;font:600 .95rem Inter,sans-serif;color:var(--texto);transition:.2s}
+.reto-btn .ico{font-size:2rem;display:block;margin-bottom:6px}
+.reto-btn:hover{transform:translateY(-2px)}
+.reto-btn.on{border-color:var(--verde);background:var(--verde2)}
+.reto-btn.visto::after{content:"✓";display:block;color:var(--verde);font-size:.85rem}
+.ficha{background:#fff;border-radius:var(--radio);overflow:hidden;box-shadow:0 2px 0 var(--arena2)}
+.ficha-head{padding:20px;background:var(--verde);color:#fff;display:flex;gap:14px;align-items:center}
+.ficha-head .ico{font-size:2.4rem}
+.ficha-head h3{margin:0;font-size:1.5rem}
+.tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--arena2);scrollbar-width:none}
+.tabs button{flex:1 0 auto;border:0;background:none;padding:12px 14px;font:600 .88rem Inter,sans-serif;color:var(--suave);cursor:pointer;border-bottom:3px solid transparent}
+.tabs button.on{color:var(--verde);border-color:var(--verde)}
+.tab-body{padding:20px}
+.tab-body ul{margin:0 0 .8em;padding-left:1.2em}
+.tab-body li{margin-bottom:.35em}
+.ods{display:flex;gap:14px;align-items:flex-start}
+.ods .num{flex:0 0 64px;height:64px;border-radius:12px;color:#fff;display:flex;align-items:center;justify-content:center;font:800 1.6rem Fraunces,serif}
+.lzt{background:var(--azul2);border-radius:12px;padding:14px}
+.jard li::marker{content:"🌱 "}
+
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5em 0 1em}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--arena2);vertical-align:top}
+th{background:var(--arena);font-weight:700}
+
+/* Acordeón */
+details{background:#fff;border-radius:var(--radio);margin-bottom:10px;box-shadow:0 2px 0 var(--arena2)}
+summary{cursor:pointer;padding:16px 18px;font-weight:700;list-style:none;display:flex;align-items:center;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-size:1.3rem;color:var(--verde)}
+details[open] summary::after{content:"–"}
+details .in{padding:0 18px 18px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chips span{background:var(--arena);padding:5px 10px;border-radius:8px;font-size:.85rem}
+.enjardin{background:var(--verde2);border-radius:10px;padding:10px 12px;font-size:.92rem}
+
+.video{position:relative;padding-top:56.25%;border-radius:var(--radio);overflow:hidden;background:#000;margin-bottom:10px}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* Actividades */
+.act{background:#fff;border-radius:var(--radio);padding:18px;margin-bottom:12px;box-shadow:0 2px 0 var(--arena2)}
+.act .q{font-weight:600;margin-bottom:10px}
+.ops{display:flex;flex-wrap:wrap;gap:8px}
+.ops button{border:2px solid var(--arena2);background:var(--arena);padding:9px 14px;border-radius:10px;font:500 .92rem Inter,sans-serif;cursor:pointer;color:var(--texto)}
+.ops button:hover:not(:disabled){border-color:var(--verde)}
+.ops button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.ops button.ko{background:var(--ko);border-color:var(--ko);color:#fff}
+.ops button:disabled{cursor:default}
+.fb{margin-top:10px;font-size:.92rem;display:none;padding:10px 12px;border-radius:10px}
+.fb.ok{display:block;background:#e4f2e9;color:#1d5a37}
+.fb.ko{display:block;background:#f7e1de;color:#7d271e}
+.marcador{position:sticky;top:60px;z-index:5;display:inline-block;background:var(--picon);color:#fff;padding:6px 14px;border-radius:999px;font-weight:600;font-size:.9rem;margin-bottom:12px}
+
+.quiz-q{font-size:1.15rem;font-weight:600;margin-bottom:14px}
+.quiz-ops{display:grid;gap:8px}
+.quiz-ops button{text-align:left;border:2px solid var(--arena2);background:#fff;padding:12px 14px;border-radius:12px;font:500 .98rem Inter,sans-serif;cursor:pointer;color:var(--texto)}
+.quiz-ops button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.quiz-ops button.ko{background:var(--ko);color:#fff;border-color:var(--ko)}
+.progreso-quiz{font-size:.85rem;color:var(--suave);margin-bottom:8px}
+.resultado{text-align:center;padding:30px 20px}
+.resultado .big{font:800 3.5rem Fraunces,serif;color:var(--verde)}
+
+textarea{width:100%;min-height:130px;border:2px solid var(--arena2);border-radius:12px;padding:12px;font:1rem Inter,sans-serif;resize:vertical}
+footer{background:var(--picon);color:#fff;font-size:.85rem;padding:20px 0;opacity:.95}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <img src="data:image/webp;base64,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" alt="Logo CIFP Zonzamas">
+      <span class="centro">CIFP Zonzamas · 2º CFGM Jardinería y Floristería</span>
+      <span class="curso">Curso 2026/27</span>
+    </div>
+    <h1>UT2 · Retos ambientales y sociales</h1>
+    <p class="sub">Sostenibilidad aplicada al sistema productivo. Qué problemas tiene el planeta, cómo nos afectan aquí en Lanzarote y qué podemos hacer desde la jardinería.</p>
+    <p class="prof">Profesora: Beatriz Socas Guerra</p>
+  </div>
+</header>
+
+<nav>
+  <div class="wrap" id="nav"></div>
+  <div class="barra"><i id="barra"></i></div>
+</nav>
+
+<main class="wrap">
+
+<!-- INICIO -->
+<section id="inicio">
+  <div class="pregunta">
+    <h2>Antes de empezar 🤔</h2>
+    <p>Piensa en tu barrio, en la playa o en el jardín donde haces prácticas. <b>¿Qué problema ambiental ves con tus propios ojos?</b> Coméntalo con tu compañero o compañera de al lado.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <span class="pill">Concepto clave</span>
+      <h3>¿Qué es un problema ambiental?</h3>
+      <p>Es todo lo que pone en peligro la salud, el equilibrio o la supervivencia de los seres vivos y de los ecosistemas: la fauna, la flora… y también las personas.</p>
+      <p>Cuando no se frena, acaba afectando a nuestra salud: más enfermedades respiratorias, epidemias o tumores.</p>
+    </div>
+    <div class="card">
+      <span class="pill">Concepto clave</span>
+      <h3>¿Por qué "ambiental y social"?</h3>
+      <p>Porque ningún problema del medio ambiente se arregla sin que la sociedad entera se implique: gobiernos, empresas, centros educativos y cada persona.</p>
+      <p>Por eso decimos que <b>un reto ambiental es también un reto social</b>.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="pill">Lo verás en todo el tema</span>
+    <h3>Los ODS: la "lista de tareas" del planeta</h3>
+    <p>En 2015 la ONU aprobó la <b>Agenda 2030</b> con 17 <b>Objetivos de Desarrollo Sostenible (ODS)</b>. Son metas que comparten todos los países para acabar con la pobreza, proteger el planeta y mejorar la vida de las personas.</p>
+    <p>Cada reto de este tema está relacionado con uno o varios ODS. Fíjate en ellos cuando abras las fichas.</p>
+  </div>
+
+  <div class="card">
+    <h3>Los grandes retos del siglo XXI</h3>
+    <p>En este tema vamos a trabajar seis:</p>
+    <div class="chips" id="chipsRetos"></div>
+  </div>
+
+  <div class="siguiente"><button class="btn" data-ir="retos">Empezar con los retos →</button></div>
+</section>
+
+<!-- RETOS -->
+<section id="retos">
+  <h2>1 · Los retos, uno a uno</h2>
+  <p>Toca cada reto para abrir su ficha. Cada ficha tiene cinco pestañas: qué es, cómo nos afecta, su ODS, qué pasa en Lanzarote y qué puedes hacer tú como jardinero o jardinera.</p>
+  <div class="retos" id="retosBtns"></div>
+  <div id="ficha"></div>
+  <div class="siguiente"><button class="btn" data-ir="empresas">Siguiente: las empresas →</button></div>
+</section>
+
+<!-- EMPRESAS -->
+<section id="empresas">
+  <h2>2 · ¿Y cómo afecta a las empresas?</h2>
+  <p>Los retos ambientales no solo afectan al planeta y a las personas. También cambian la forma de trabajar de los sectores productivos, y la jardinería es uno de ellos.</p>
+  <div class="grid" id="empresasGrid"></div>
+  <div class="nota" style="margin-top:6px">💬 <b>Para pensar:</b> si mañana montaras tu propia empresa de jardinería en Lanzarote, ¿cuál de estos cuatro puntos te preocuparía más? ¿Y cuál te daría más oportunidades?</div>
+  <div class="siguiente"><button class="btn" data-ir="medidas">Siguiente: las medidas →</button></div>
+</section>
+
+<!-- MEDIDAS -->
+<section id="medidas">
+  <h2>3 · Medidas para reducir los impactos</h2>
+  <p>Para frenar los impactos ambientales hay que actuar en muchas áreas a la vez. Abre cada una y fíjate en el ejemplo de jardinería.</p>
+
+  <div class="card">
+    <span class="pill">🎬 Vídeo</span>
+    <h3>¿Qué es la economía circular?</h3>
+    <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/aB2mK5QKyvY" title="¿Qué es la economía circular?" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+    <p style="font-size:.9rem">Si no se ve, ábrelo aquí: <a href="https://youtu.be/aB2mK5QKyvY" target="_blank" rel="noopener">youtu.be/aB2mK5QKyvY</a></p>
+    <div class="nota">Mientras lo ves: <b>¿qué diferencia hay entre la economía lineal y la circular?</b> ¿Qué "residuo" de un jardín podría volver a ser un recurso?</div>
+  </div>
+
+  <div id="medidasList"></div>
+
+  <div class="card">
+    <h3>¿Quién pone en marcha estas medidas?</h3>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+      <div class="lzt">🏛️ <b>Gobiernos</b><br><small>Leyes, ayudas, planes</small></div>
+      <div class="lzt">🏭 <b>Sectores productivos</b><br><small>Empresas como la tuya</small></div>
+      <div class="lzt">🏫 <b>Centros educativos</b><br><small>Formación y conciencia</small></div>
+      <div class="lzt">🤝 <b>Organizaciones</b><br><small>ONG, asociaciones</small></div>
+      <div class="lzt">🙋 <b>Cada persona</b><br><small>Dentro de sus posibilidades</small></div>
+    </div>
+    <p style="margin-top:12px">Para comprobar que las medidas funcionan se hacen seguimientos y estudios como la <b>Evaluación de Impacto Ambiental (EIA)</b>, que analiza los efectos de un proyecto antes de aprobarlo.</p>
+  </div>
+  <div class="siguiente"><button class="btn" data-ir="actividades">Siguiente: ¡a practicar! →</button></div>
+</section>
+
+<!-- ACTIVIDADES -->
+<section id="actividades">
+  <h2>A practicar 🧩</h2>
+  <span class="marcador" id="marcadorAct">Aciertos: 0</span>
+
+  <h3>Actividad 1 · ¿Qué tipo de contaminación es?</h3>
+  <p>Lee cada situación y elige el tipo de contaminación.</p>
+  <div id="act1"></div>
+
+  <h3 style="margin-top:26px">Actividad 2 · ¿Sostenible o no?</h3>
+  <p>Son cosas que pasan en jardines de verdad. Decide si son prácticas sostenibles.</p>
+  <div id="act2"></div>
+
+  <div class="siguiente"><button class="btn" data-ir="quiz">Siguiente: el quiz final →</button></div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <h2>Quiz final ✅</h2>
+  <div class="card" id="quizBox"></div>
+</section>
+
+<!-- COMPROMISO -->
+<section id="compromiso">
+  <h2>Mi compromiso 🌱</h2>
+  <div class="card">
+    <p>Escribe <b>tres cosas concretas</b> que harás en tu trabajo como jardinero o jardinera para reducir tu impacto ambiental. Piensa en el agua, los residuos, los productos que usas, la maquinaria y las plantas que eliges.</p>
+    <textarea id="txtCompromiso" placeholder="1. &#10;2. &#10;3. "></textarea>
+    <p style="font-size:.85rem;color:var(--suave);margin-top:8px">Se guarda solo en este navegador. Cópialo y entrégalo en Classroom si tu profesora te lo pide.</p>
+    <button class="btn sec" id="copiar">Copiar texto</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>CIFP Zonzamas · Sostenibilidad aplicada al sistema productivo · UT2</span>
+    <span>Beatriz Socas Guerra · Curso 2026/27</span>
+  </div>
+</footer>
+
+<script>
+/* ---------- DATOS ---------- */
+const SECCIONES = [
+  {id:"inicio", t:"Inicio"},
+  {id:"retos", t:"1 · Retos"},
+  {id:"empresas", t:"2 · Empresas"},
+  {id:"medidas", t:"3 · Medidas"},
+  {id:"actividades", t:"Actividades"},
+  {id:"quiz", t:"Quiz"},
+  {id:"compromiso", t:"Mi compromiso"}
+];
+
+const RETOS = [
+ {id:"clima", ico:"🌡️", t:"Cambio climático", color:"#3f7e44",
+  que:`<p>Son cambios de la temperatura y del clima a largo plazo. Siempre han ocurrido de forma natural, en ciclos de miles o millones de años.</p>
+  <p>Hoy la causa principal es <b>humana</b>: al quemar combustibles fósiles (carbón, petróleo y gas) se liberan <b>gases de efecto invernadero</b>, como el CO₂, que se acumulan en la atmósfera y retienen el calor. El resultado es el <b>calentamiento global</b>.</p>
+  <p>El problema es la velocidad: va tan rápido que ni la naturaleza ni las personas tienen tiempo de adaptarse.</p>
+  <div class="nota"><b>¿Qué se está haciendo?</b> La Convención Marco de Naciones Unidas sobre el Cambio Climático (1992) y el Acuerdo de París (2015), en el que los países se comprometen a reducir sus emisiones.</div>`,
+  afecta:`<ul><li><b>Al planeta:</b> destruye ecosistemas terrestres y marinos, derrite el hielo de los polos y sube el nivel del mar.</li>
+  <li><b>A las personas:</b> más olas de calor y de frío, tormentas, huracanes e inundaciones. Aumenta el riesgo de lesiones y enfermedades y se pierden medios de vida en las costas.</li></ul>`,
+  ods:{n:13, t:"Acción por el clima", c:"#3f7e44", d:"Adoptar medidas urgentes contra el cambio climático: tenerlo en cuenta en las políticas de los países, en las empresas y en la sociedad, y educar a la población sobre el problema."},
+  lzt:"Lanzarote ya es una isla muy seca y calurosa. Los episodios de calor y calima estresan a las plantas y a quienes trabajan al aire libre. Además, buena parte de la población, los hoteles y las infraestructuras están en la costa, que es la zona más expuesta a la subida del mar.",
+  jard:["Elegir especies adaptadas al calor y la sequía.","Plantar árboles que den sombra y almacenen CO₂.","Usar menos maquinaria de gasolina.","Organizar el trabajo en las horas más frescas: también es cuidar tu salud."]},
+ {id:"pob", ico:"👥", t:"Superpoblación", color:"#f99d26",
+  que:`<p>Ocurre cuando hay demasiadas personas en un territorio para los recursos que tiene. Esto baja la calidad de vida y puede provocar hambre, enfermedades e incluso conflictos.</p>
+  <p><b>¿Por qué ha crecido tanto la población?</b></p>
+  <ul><li>Baja la mortalidad gracias a la medicina y la higiene.</li><li>Se producen más alimentos.</li><li>Vivimos más años.</li><li>Las migraciones concentran a la gente en las ciudades.</li></ul>
+  <div class="nota"><b>Ojo:</b> el número de hijos por mujer en el mundo lleva décadas <b>bajando</b>. La población crece sobre todo porque muere menos gente y vivimos más.</div>`,
+  afecta:`<ul><li><b>Al planeta:</b> más cambio climático, sobreexplotación de recursos y menos seguridad alimentaria.</li>
+  <li><b>A las personas:</b> en las ciudades saturadas faltan recursos, cuesta encontrar empleo y vivienda y empeora la calidad de vida.</li></ul>`,
+  ods:{n:11, t:"Ciudades y comunidades sostenibles", c:"#f99d26", d:"Conseguir ciudades inclusivas, seguras, resilientes y sostenibles. Más de la mitad de la población mundial ya vive en zonas urbanas."},
+  lzt:"En Lanzarote la presión viene sobre todo del turismo: cualquier día del año hay en la isla bastante más gente que la que está empadronada. Más personas significa más agua, más energía, más residuos y más suelo urbanizado.",
+  jard:["Crear zonas verdes urbanas que den sombra y bienestar.","Diseñar jardines de hoteles y urbanizaciones con bajo consumo de agua.","Entender el jardín como un servicio a la comunidad, no solo como decoración."]},
+ {id:"agua", ico:"💧", t:"Consumo de agua", color:"#26bde2",
+  que:`<p>El agua es imprescindible y limitada, pero la usamos como si nunca se fuera a acabar. La falta de agua afecta ya a <b>más del 40 % de la población mundial</b>.</p>
+  <p>La demanda no deja de subir por el crecimiento de la población y de las ciudades y por lo que necesitan la agricultura, la industria y la energía. Con el aumento de las temperaturas y las sequías, la escasez será cada vez mayor.</p>`,
+  afecta:`<ul><li><b>A la salud:</b> deshidratación y enfermedades por falta de higiene y de saneamiento, como la diarrea o el cólera.</li>
+  <li><b>A la alimentación:</b> sin agua no hay agricultura ni ganadería.</li>
+  <li><b>A la naturaleza:</b> las sequías dañan la biodiversidad.</li></ul>`,
+  ods:{n:6, t:"Agua limpia y saneamiento", c:"#26bde2", d:"Que todo el mundo tenga acceso al agua potable y a un saneamiento e higiene adecuados, y mejorar la calidad del agua."},
+  lzt:"Casi toda el agua que sale del grifo en Lanzarote viene de <b>desaladoras</b>: se transforma agua de mar en agua potable gastando mucha energía. Detrás de cada litro de riego hay un coste económico y emisiones. Por eso aquí se aprovecha el agua depurada para regar, y la agricultura tradicional inventó el enarenado con picón y las gavias para no perder ni una gota de lluvia.",
+  jard:["Riego por goteo con programador.","Regar a primera hora o al atardecer, nunca a mediodía.","Acolchar con picón o corteza para frenar la evaporación.","Agrupar las plantas según el agua que necesitan (hidrozonas).","Revisar y reparar fugas."]},
+ {id:"cont", ico:"🏭", t:"Contaminación", color:"#4c9f38",
+  que:`<p>Hay contaminación cuando en un lugar aparecen sustancias o elementos que no deberían estar ahí y que rompen el equilibrio del ecosistema.</p>
+  <p><b>Agentes contaminantes:</b> físicos (polvo, vidrio, plástico), químicos (mercurio, detergentes, insecticidas) y biológicos (virus, bacterias, hongos).</p>
+  <p><b>Origen:</b> puede ser <b>natural</b> (un volcán que expulsa ceniza y gases, como en La Palma en 2021) o <b>humano</b>.</p>
+  <table><tr><th>Según el medio</th><th>Según el tipo</th></tr>
+  <tr><td>Atmosférica (aire)<br>Hídrica (agua)<br>Del suelo</td><td>Química · Radiactiva · Térmica · Acústica (ruido) · Visual (paisaje) · Lumínica (luz) · Electromagnética</td></tr></table>`,
+  afecta:`<ul><li><b>Aire contaminado:</b> enfermedades del corazón y respiratorias, cáncer de pulmón.</li>
+  <li><b>Agua contaminada:</b> cólera, diarrea, hepatitis A, fiebre tifoidea.</li>
+  <li><b>Ruido:</b> problemas de sueño, estrés, enfermedades cardiovasculares, dificultades para aprender.</li>
+  <li><b>Exceso de luz:</b> alteraciones del sueño, estrés y fatiga. También desorienta a la fauna.</li>
+  <li><b>Química, microbiológica y radiactiva:</b> enfermedades graves o incluso la muerte.</li></ul>`,
+  ods:{n:3, t:"Salud y bienestar", c:"#4c9f38", d:"Entre sus metas está reducir las enfermedades y muertes causadas por la contaminación del aire, el agua y el suelo."},
+  lzt:"Cada otoño, muchos pollos de pardela se desorientan con las luces de la costa y caen en calles y carreteras. Las zonas turísticas sufren ruido y los plásticos llegan a las playas.",
+  jard:["Usar menos fitosanitarios y apostar por la lucha integrada.","Aplicarlos solo con el carné de aplicador y siguiendo la etiqueta.","Preferir maquinaria eléctrica o de batería: menos ruido y humo.","Respetar los horarios de descanso de los vecinos.","Iluminar el jardín con luz cálida, dirigida hacia abajo y con temporizador.","No tirar nunca restos de productos por el desagüe."]},
+ {id:"defo", ico:"🌳", t:"Deforestación y biodiversidad", color:"#56c02b",
+  que:`<p>La deforestación es la eliminación de bosques y vegetación por la acción humana, casi siempre para dar otro uso al suelo. El motivo principal es <b>económico</b>.</p>
+  <p><b>Causas principales:</b></p>
+  <ul><li>Tala para madera y papel.</li><li>Ganadería extensiva, que agota la vegetación y se traslada a otra zona.</li><li>Grandes cultivos y minería.</li><li>Crecimiento urbano.</li><li>Incendios forestales.</li></ul>`,
+  afecta:`<ul><li><b>Al planeta:</b> se pierde biodiversidad, el suelo se erosiona y avanza la desertificación.</li>
+  <li><b>A las personas:</b> al destruir los hábitats aumenta el riesgo de que enfermedades de la fauna salvaje pasen a los humanos.</li></ul>`,
+  ods:{n:15, t:"Vida de ecosistemas terrestres", c:"#56c02b", d:"Gestionar los bosques de forma sostenible, luchar contra la desertificación, frenar la degradación del suelo y detener la pérdida de biodiversidad."},
+  lzt:"En Lanzarote apenas hay bosques. Aquí el reto es la pérdida de suelo, la desertificación, la urbanización del territorio y las <b>especies invasoras</b>. Un ejemplo es el rabo de gato (<i>Pennisetum setaceum</i>), que se plantó como ornamental y hoy desplaza a la flora autóctona. La isla es Reserva de la Biosfera desde 1993.",
+  jard:["Usar plantas autóctonas como tabaibas o verodes.","No plantar nunca especies invasoras.","Poner flores para polinizadores y refugios para insectos.","No dejar el suelo desnudo, para protegerlo de la erosión."]},
+ {id:"otros", ico:"♻️", t:"Residuos y energía", color:"#bf8b2e",
+  que:`<p>Hay otros problemas que también afectan a la salud y a la convivencia entre países:</p>
+  <ul><li><b>La gestión de los residuos:</b> generamos muchísimos y gran parte no se recupera.</li>
+  <li><b>El uso de energías no renovables:</b> se agotan y contaminan.</li>
+  <li><b>La pérdida de biodiversidad</b> en general.</li></ul>`,
+  afecta:`<ul><li>Contaminan el suelo, el agua y el aire.</li><li>Agotan recursos que no se pueden recuperar.</li><li>Pueden generar tensiones y conflictos entre países por el control de la energía y los recursos.</li></ul>`,
+  ods:{n:12, t:"Producción y consumo responsables", c:"#bf8b2e", d:"Producir y consumir usando menos recursos y generando menos residuos: reducir, reutilizar y reciclar."},
+  lzt:"En una isla, todo lo que llega y todo lo que se tira tiene que gestionarse en poco espacio. Además, casi toda la energía de Lanzarote se sigue produciendo con combustibles fósiles, aunque cada vez hay más instalaciones eólicas y solares.",
+  jard:["Compostar los restos de poda y siega.","Reutilizar macetas y bandejas.","Llevar los envases de fitosanitarios a un punto SIGFITO, no al contenedor amarillo.","Comprar a granel y evitar plásticos de un solo uso."]}
+];
+
+const EMPRESAS = [
+ {ico:"📜", t:"Normativa", d:"Las empresas deben cumplir las leyes ambientales: controlar sus emisiones, gestionar sus residuos y regular cómo usan los recursos naturales.", j:"Carné de aplicador de fitosanitarios, gestión de residuos de poda, normas de ruido y horarios."},
+ {ico:"💡", t:"Nuevas oportunidades", d:"Los retos ambientales también abren negocios nuevos e innovadores.", j:"Xerojardinería, cubiertas y muros verdes, riego inteligente, mantenimiento ecológico, compostaje."},
+ {ico:"⚠️", t:"Reputación y riesgos", d:"Una empresa que contamina pierde clientes y puede recibir sanciones económicas.", j:"Un hotel no quiere un jardinero que use mal los productos o derroche agua delante de sus clientes."},
+ {ico:"🚚", t:"Cadena de suministro", d:"Si escasean los recursos, se encarecen o faltan, y la empresa produce menos.", j:"Agua cada vez más cara, subidas de precio de abonos y sustratos, plantas que no llegan a la isla."}
+];
+
+const MEDIDAS = [
+ {ico:"⚡", t:"Eficiencia energética", m:["Auditorías energéticas","Aislamiento térmico de edificios","Iluminación LED","Gestionar la demanda de energía","Optimizar procesos","Recuperar el calor residual","Automatización y control"], j:"Programadores de riego, bombas eficientes, herramientas de batería cargadas con energía solar."},
+ {ico:"🗑️", t:"Gestión de residuos", m:["Reducir en origen","Reutilizar","Reciclar","Compostar","Tratar bien los residuos peligrosos","Leyes y normas","Economía circular","Colaboración público-privada"], j:"Los restos de poda se convierten en compost o acolchado: el residuo vuelve al jardín como recurso."},
+ {ico:"🌍", t:"Conservación de los recursos naturales", m:["Proteger ecosistemas y biodiversidad","Reforestar","Gestión sostenible del agua","Uso sostenible de la tierra","Pesca responsable","Cooperación internacional"], j:"Plantas autóctonas, riego eficiente y cuidar el suelo con acolchados y abonos orgánicos."},
+ {ico:"🛡️", t:"Control de la contaminación", m:["Leyes con límites de emisiones","Tecnologías de control en las industrias","Vigilar la calidad del aire, el agua y el suelo","Reducir, reutilizar y reciclar","Energías limpias"], j:"Lucha integrada contra plagas: el producto químico es el último recurso, no el primero."},
+ {ico:"🚲", t:"Movilidad sostenible", m:["Transporte público eficiente","Carriles bici y zonas peatonales","Compartir vehículo","Vehículos eléctricos","Teletrabajo","Restricciones de acceso en zonas congestionadas"], j:"Planificar las rutas de mantenimiento para hacer menos kilómetros, o usar furgonetas eléctricas."},
+ {ico:"🔬", t:"Innovación tecnológica", m:["Investigación y desarrollo","Apoyo a empresas emergentes","Certificaciones ambientales","Plataformas para compartir conocimiento"], j:"Sensores de humedad del suelo que solo activan el riego cuando hace falta."},
+ {ico:"🎓", t:"Educación y sensibilización", m:["Programas educativos","Talleres prácticos","Campañas de sensibilización","Voluntariado ambiental","Títulos de FP y universidad"], j:"¡Tú mismo! Este ciclo forma profesionales que saben trabajar de forma sostenible."}
+];
+
+const ACT1 = [
+ {q:"Una sopladora de gasolina funcionando a las 7 de la mañana junto a unos apartamentos.", o:["Acústica","Visual","Térmica"], c:0, e:"Es ruido por encima de lo tolerable, sobre todo a esa hora: contaminación acústica."},
+ {q:"Los focos de un hotel iluminan el cielo toda la noche y no dejan ver las estrellas.", o:["Electromagnética","Lumínica","Atmosférica"], c:1, e:"Exceso de luz artificial: contaminación lumínica. Además, desorienta a aves como la pardela."},
+ {q:"Restos de un insecticida que, con el riego, acaban llegando al agua subterránea.", o:["Visual","Acústica","Hídrica"], c:2, e:"Una sustancia química llega al agua: contaminación hídrica (y química por el tipo de contaminante)."},
+ {q:"Macetas de plástico rotas y bolsas de sustrato abandonadas en un solar.", o:["Del suelo","Térmica","Lumínica"], c:0, e:"Residuos no biodegradables tirados en el terreno: contaminación del suelo."},
+ {q:"El humo que sale del tubo de escape de una desbrozadora vieja.", o:["Hídrica","Atmosférica","Visual"], c:1, e:"Se liberan gases y partículas al aire: contaminación atmosférica."},
+ {q:"Una nave industrial y vallas publicitarias tapan la vista de un paisaje volcánico.", o:["Visual","Radiactiva","Acústica"], c:0, e:"Altera la vista del paisaje: contaminación visual. Lanzarote cuida mucho esto desde la época de César Manrique."},
+ {q:"Una instalación vierte agua caliente al mar y sube la temperatura del agua de la zona.", o:["Lumínica","Del suelo","Térmica"], c:2, e:"Eleva la temperatura del medio: contaminación térmica."}
+];
+
+const ACT2 = [
+ {q:"Regar el césped a mediodía en pleno agosto.", s:false, e:"A esa hora gran parte del agua se evapora antes de llegar a las raíces. Mejor a primera hora o al atardecer."},
+ {q:"Cubrir los alcorques y parterres con picón.", s:true, e:"El acolchado de picón reduce la evaporación, mantiene la humedad del suelo y frena las malas hierbas."},
+ {q:"Plantar rabo de gato porque es bonito y aguanta la sequía.", s:false, e:"Es una especie invasora: se escapa del jardín y desplaza a la flora autóctona de Canarias."},
+ {q:"Compostar los restos de poda en lugar de llevarlos al vertedero.", s:true, e:"Es economía circular: el residuo se convierte en abono para el propio jardín."},
+ {q:"Echar el doble de dosis de un fitosanitario «para asegurarse».", s:false, e:"Contamina suelo y agua, es peligroso para la salud y no es más eficaz. Siempre la dosis de la etiqueta."},
+ {q:"Instalar riego por goteo con programador y sensor de humedad.", s:true, e:"El agua llega solo donde y cuando hace falta. Ahorro de agua y de energía."},
+ {q:"Tirar los envases vacíos de fitosanitarios al contenedor amarillo.", s:false, e:"Son residuos especiales: van a un punto de recogida SIGFITO."},
+ {q:"Usar cortasetos y sopladoras de batería en una zona de viviendas.", s:true, e:"Menos ruido y nada de humo: menos contaminación acústica y atmosférica."},
+ {q:"Agrupar en el diseño las plantas que necesitan poca agua por un lado y las que necesitan más por otro.", s:true, e:"Son las hidrozonas: cada zona recibe solo el riego que necesita."}
+];
+
+const QUIZ = [
+ {q:"¿Cuál es hoy la causa principal del cambio climático?", o:["Las erupciones volcánicas","La quema de combustibles fósiles","Los cambios naturales de la órbita terrestre","La deforestación de Canarias"], c:1, e:"Carbón, petróleo y gas liberan gases de efecto invernadero que retienen el calor."},
+ {q:"¿Qué hacen los gases de efecto invernadero?", o:["Destruyen el suelo","Retienen el calor en la atmósfera","Enfrían el planeta","Contaminan solo el agua"], c:1, e:"Actúan como el plástico de un invernadero: dejan entrar el calor pero no lo dejan salir."},
+ {q:"¿Qué acuerdo internacional sobre el clima se firmó en 2015?", o:["El Protocolo de Montreal","El Acuerdo de París","La Cumbre de Río","La Agenda 2050"], c:1, e:"En el Acuerdo de París los países se comprometieron a reducir sus emisiones."},
+ {q:"¿Cuál es el ODS 6?", o:["Acción por el clima","Vida de ecosistemas terrestres","Agua limpia y saneamiento","Ciudades sostenibles"], c:2, e:"El ODS 6 busca agua potable y saneamiento para todas las personas."},
+ {q:"¿De dónde sale casi toda el agua de abasto en Lanzarote?", o:["De pozos","De la lluvia","De desaladoras","De embalses"], c:2, e:"Por eso el agua es cara en energía y hay que aprovecharla al máximo."},
+ {q:"La población mundial crece sobre todo porque…", o:["Cada vez nacen más niños por mujer","Muere menos gente y vivimos más años","Hay más migraciones","Hay menos ciudades"], c:1, e:"La fecundidad mundial lleva décadas bajando; lo que hace crecer la población es la menor mortalidad y la mayor longevidad."},
+ {q:"El ruido excesivo de la maquinaria es contaminación…", o:["Visual","Térmica","Acústica","Lumínica"], c:2, e:"Puede provocar estrés, problemas de sueño y enfermedades cardiovasculares."},
+ {q:"¿Cuál es el principal motivo de la deforestación?", o:["El clima","El económico","Los volcanes","El turismo"], c:1, e:"Se eliminan bosques para dar al suelo un uso más rentable: cultivos, ganadería, minería, urbanización…"},
+ {q:"¿Qué práctica es un ejemplo de economía circular en jardinería?", o:["Llevar la poda al vertedero","Comprar sustrato nuevo cada temporada","Compostar los restos de poda","Quemar los restos vegetales"], c:2, e:"El residuo vuelve al jardín como recurso."},
+ {q:"¿Qué es una EIA?", o:["Una ayuda económica europea","Una Evaluación de Impacto Ambiental","Un tipo de energía renovable","Un ODS"], c:1, e:"Analiza los efectos que tendrá un proyecto sobre el medio ambiente antes de aprobarlo."}
+];
+
+/* ---------- NAVEGACIÓN ---------- */
+const visitadas = new Set();
+const nav = document.getElementById("nav");
+SECCIONES.forEach(s=>{
+  const b=document.createElement("button");
+  b.dataset.id=s.id; b.innerHTML=s.t+'<span class="tick"></span>';
+  b.onclick=()=>ir(s.id);
+  nav.appendChild(b);
+});
+function ir(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
+  nav.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.id===id));
+  visitadas.add(id);
+  nav.querySelectorAll("button").forEach(b=>{ if(visitadas.has(b.dataset.id)) b.querySelector(".tick").textContent=" ✓"; });
+  document.getElementById("barra").style.width=(visitadas.size/SECCIONES.length*100)+"%";
+  const activo=nav.querySelector("button.on"); if(activo) activo.scrollIntoView({inline:"center",block:"nearest"});
+  window.scrollTo({top:document.querySelector("nav").offsetTop,behavior:"smooth"});
+}
+document.querySelectorAll("[data-ir]").forEach(b=>b.onclick=()=>ir(b.dataset.ir));
+
+/* ---------- INICIO ---------- */
+document.getElementById("chipsRetos").innerHTML=RETOS.map(r=>`<span>${r.ico} ${r.t}</span>`).join("");
+
+/* ---------- RETOS ---------- */
+const retosBtns=document.getElementById("retosBtns");
+const vistos=new Set();
+RETOS.forEach(r=>{
+  const b=document.createElement("button");
+  b.className="reto-btn"; b.dataset.id=r.id;
+  b.innerHTML=`<span class="ico">${r.ico}</span>${r.t}`;
+  b.onclick=()=>abrirReto(r.id);
+  retosBtns.appendChild(b);
+});
+const TABS=[["que","Qué es"],["afecta","Cómo nos afecta"],["ods","ODS"],["lzt","En Lanzarote"],["jard","Tú, jardinero/a"]];
+function abrirReto(id){
+  const r=RETOS.find(x=>x.id===id);
+  vistos.add(id);
+  retosBtns.querySelectorAll(".reto-btn").forEach(b=>{b.classList.toggle("on",b.dataset.id===id); b.classList.toggle("visto",vistos.has(b.dataset.id));});
+  document.getElementById("ficha").innerHTML=`
+   <div class="ficha">
+     <div class="ficha-head" style="background:${r.color}"><span class="ico">${r.ico}</span><h3>${r.t}</h3></div>
+     <div class="tabs">${TABS.map((t,i)=>`<button data-t="${t[0]}" class="${i===0?'on':''}">${t[1]}</button>`).join("")}</div>
+     <div class="tab-body" id="tabBody"></div>
+   </div>`;
+  const pintar=k=>{
+    let h="";
+    if(k==="que") h=r.que;
+    if(k==="afecta") h=r.afecta;
+    if(k==="ods") h=`<div class="ods"><div class="num" style="background:${r.ods.c}">${r.ods.n}</div><div><h3>ODS ${r.ods.n}: ${r.ods.t}</h3><p>${r.ods.d}</p></div></div>`;
+    if(k==="lzt") h=`<div class="lzt">📍 ${r.lzt}</div>`;
+    if(k==="jard") h=`<p><b>¿Qué puedes hacer tú en tu trabajo?</b></p><ul class="jard">${r.jard.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+    document.getElementById("tabBody").innerHTML=h;
+  };
+  document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b)); pintar(b.dataset.t);
+  });
+  pintar("que");
+}
+abrirReto(RETOS[0].id);
+
+/* ---------- EMPRESAS ---------- */
+document.getElementById("empresasGrid").innerHTML=EMPRESAS.map(e=>`
+  <div class="card"><div style="font-size:2rem">${e.ico}</div><h3>${e.t}</h3><p>${e.d}</p><div class="enjardin"><b>En jardinería:</b> ${e.j}</div></div>`).join("");
+
+/* ---------- MEDIDAS ---------- */
+document.getElementById("medidasList").innerHTML=MEDIDAS.map(m=>`
+  <details><summary><span style="font-size:1.4rem">${m.ico}</span>${m.t}</summary>
+   <div class="in"><div class="chips">${m.m.map(x=>`<span>${x}</span>`).join("")}</div>
+   <div class="enjardin">🌱 <b>En jardinería:</b> ${m.j}</div></div></details>`).join("");
+
+/* ---------- ACTIVIDADES ---------- */
+let aciertosAct=0;
+const marcador=document.getElementById("marcadorAct");
+const totalAct=ACT1.length+ACT2.length;
+function actualizarMarcador(){marcador.textContent=`Aciertos: ${aciertosAct} de ${totalAct}`;}
+actualizarMarcador();
+function crearActividad(cont,items,getOps,esCorrecta){
+  const el=document.getElementById(cont);
+  items.forEach((it,i)=>{
+    const d=document.createElement("div"); d.className="act";
+    d.innerHTML=`<div class="q">${i+1}. ${it.q}</div><div class="ops"></div><div class="fb"></div>`;
+    const ops=d.querySelector(".ops"), fb=d.querySelector(".fb");
+    getOps(it).forEach((txt,j)=>{
+      const b=document.createElement("button"); b.textContent=txt;
+      b.onclick=()=>{
+        const ok=esCorrecta(it,j);
+        ops.querySelectorAll("button").forEach((x,k)=>{x.disabled=true; if(esCorrecta(it,k)) x.classList.add("ok");});
+        if(!ok) b.classList.add("ko");
+        fb.className="fb "+(ok?"ok":"ko");
+        fb.innerHTML=(ok?"✅ ¡Bien! ":"❌ No exactamente. ")+it.e;
+        if(ok){aciertosAct++; actualizarMarcador();}
+      };
+      ops.appendChild(b);
+    });
+    el.appendChild(d);
+  });
+}
+crearActividad("act1",ACT1,it=>it.o,(it,j)=>j===it.c);
+crearActividad("act2",ACT2,()=>["👍 Sostenible","👎 No sostenible"],(it,j)=>(j===0)===it.s);
+
+/* ---------- QUIZ ---------- */
+let qi=0, qok=0;
+const quizBox=document.getElementById("quizBox");
+function pintarQuiz(){
+  if(qi>=QUIZ.length){
+    const nota=Math.round(qok/QUIZ.length*10*10)/10;
+    const msg=qok>=9?"¡Excelente! Dominas el tema 🌟":qok>=7?"¡Muy bien! Repasa los fallos y lo tienes 💪":qok>=5?"Aprobado. Vuelve a las fichas de los retos para afianzar 📚":"Toca repasar. Revisa las fichas y vuelve a intentarlo 🔁";
+    quizBox.innerHTML=`<div class="resultado"><div class="big">${qok}/${QUIZ.length}</div><p><b>Nota: ${nota}</b></p><p>${msg}</p>
+      <button class="btn sec" id="repetir">Repetir quiz</button> <button class="btn" data-ir2="compromiso">Mi compromiso →</button></div>`;
+    document.getElementById("repetir").onclick=()=>{qi=0;qok=0;pintarQuiz();};
+    quizBox.querySelector("[data-ir2]").onclick=()=>ir("compromiso");
+    return;
+  }
+  const p=QUIZ[qi];
+  quizBox.innerHTML=`<div class="progreso-quiz">Pregunta ${qi+1} de ${QUIZ.length} · Aciertos: ${qok}</div>
+    <div class="quiz-q">${p.q}</div><div class="quiz-ops"></div><div class="fb"></div>
+    <div class="siguiente" style="display:none"><button class="btn">${qi===QUIZ.length-1?"Ver resultado":"Siguiente →"}</button></div>`;
+  const ops=quizBox.querySelector(".quiz-ops"), fb=quizBox.querySelector(".fb"), sig=quizBox.querySelector(".siguiente");
+  p.o.forEach((txt,j)=>{
+    const b=document.createElement("button"); b.textContent=txt;
+    b.onclick=()=>{
+      const ok=j===p.c; if(ok) qok++;
+      ops.querySelectorAll("button").forEach((x,k)=>{x.disabled=true; if(k===p.c) x.classList.add("ok");});
+      if(!ok) b.classList.add("ko");
+      fb.className="fb "+(ok?"ok":"ko"); fb.innerHTML=(ok?"✅ ":"❌ ")+p.e;
+      sig.style.display="flex";
+    };
+    ops.appendChild(b);
+  });
+  sig.querySelector("button").onclick=()=>{qi++;pintarQuiz();};
+}
+pintarQuiz();
+
+/* ---------- COMPROMISO ---------- */
+const txt=document.getElementById("txtCompromiso");
+try{ txt.value=localStorage.getItem("ut2-compromiso")||""; }catch(e){}
+txt.addEventListener("input",()=>{ try{ localStorage.setItem("ut2-compromiso",txt.value); }catch(e){} });
+document.getElementById("copiar").onclick=()=>{
+  const v=txt.value.trim(); if(!v) return;
+  const hecho=()=>{const b=document.getElementById("copiar"); b.textContent="¡Copiado!"; setTimeout(()=>b.textContent="Copiar texto",1500);};
+  if(navigator.clipboard) navigator.clipboard.writeText(v).then(hecho).catch(()=>{txt.select();document.execCommand("copy");hecho();});
+  else {txt.select();document.execCommand("copy");hecho();}
+};
+
+ir("inicio");
+</script>
+</body>
+</html>
